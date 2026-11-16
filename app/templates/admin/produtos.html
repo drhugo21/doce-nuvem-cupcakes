@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% from "_macros.html" import brl, cupcake %}
+{% block content %}
+<h1>Produtos</h1>
+<p><a class="botao" href="{{ url_for('admin.produto_form') }}">+ Novo produto</a></p>
+<table class="tabela"><thead><tr><th></th><th>Nome</th><th>Categoria</th><th>Preço</th><th>Estoque</th><th>Ativo</th><th></th></tr></thead><tbody>
+{% for p in produtos %}
+<tr><td>{{ cupcake(p.cor, 32) }}</td><td>{{ p.nome }}</td><td>{{ p.categoria.nome }}</td><td>{{ brl(p.preco) }}</td>
+<td>{{ p.estoque }}</td><td>{{ 'Sim' if p.ativo else 'Não' }}</td><td><a href="{{ url_for('admin.produto_form', produto_id=p.id) }}">Editar</a></td></tr>
+{% endfor %}</tbody></table>
+{% endblock %}

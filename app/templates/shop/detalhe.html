@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% from "_macros.html" import brl, cupcake %}
+{% block title %}{{ produto.nome }} · Doce Nuvem{% endblock %}
+{% block content %}
+<a href="{{ url_for('shop.vitrine') }}">← Voltar</a>
+<section class="detalhe">
+  <div class="detalhe-img">{{ cupcake(produto.cor, 220) }}</div>
+  <div>
+    <span class="tag">{{ produto.categoria.nome }}</span>
+    <h1>{{ produto.nome }}</h1>
+    <p>{{ produto.descricao }}</p>
+    <p class="preco grande">{{ brl(produto.preco) }}</p>
+    {% if produto.disponivel %}
+    <p class="muted">{{ produto.estoque }} disponível(is)</p>
+    <form method="post" action="{{ url_for('cart.adicionar', produto_id=produto.id) }}" class="linha">
+      <label for="qtd">Quantidade</label>
+      <input id="qtd" type="number" name="quantidade" value="1" min="1" max="{{ produto.estoque }}">
+      <button class="botao">Adicionar ao carrinho</button>
+    </form>
+    {% else %}<p class="esgotado">Esgotado no momento</p>{% endif %}
+  </div>
+</section>
+{% endblock %}

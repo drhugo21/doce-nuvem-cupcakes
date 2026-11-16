@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% from "_macros.html" import brl %}
+{% block content %}
+<h1>Finalizar pedido</h1>
+<form method="post" class="checkout" id="checkout">
+  <fieldset><legend>1. Entrega</legend>
+    <label class="opcao"><input type="radio" name="tipo_entrega" value="entrega" {% if form.get('tipo_entrega','entrega')=='entrega' %}checked{% endif %}> Receber em casa ({{ brl(frete_entrega) if frete_entrega else 'frete grátis' }})</label>
+    <label class="opcao"><input type="radio" name="tipo_entrega" value="retirada" {% if form.get('tipo_entrega')=='retirada' %}checked{% endif %}> Retirar na loja (grátis)</label>
+    <div id="bloco-endereco">
+      {% for e in enderecos %}
+      <label class="opcao"><input type="radio" name="endereco_id" value="{{ e.id }}" {% if loop.first %}checked{% endif %}> {{ e.formatado() }}</label>
+      {% endfor %}
+      <label class="opcao"><input type="radio" name="endereco_id" value="novo" {% if not enderecos %}checked{% endif %}> Novo endereço</label>
+      <div class="grid2" id="novo-endereco">
+        <div><label for="cep">CEP</label><input id="cep" name="cep" value="{{ form.get('cep','') }}" placeholder="00000-000"></div>
+        <div><label for="logradouro">Rua</label><input id="logradouro" name="logradouro" value="{{ form.get('logradouro','') }}"></div>
+        <div><label for="numero">Número</label><input id="numero" name="numero" value="{{ form.get('numero','') }}"></div>
+        <div><label for="complemento">Complemento</label><input id="complemento" name="complemento" value="{{ form.get('complemento','') }}"></div>
+        <div><label for="bairro">Bairro</label><input id="bairro" name="bairro" value="{{ form.get('bairro','') }}"></div>
+        <div><label for="cidade">Cidade</label><input id="cidade" name="cidade" value="{{ form.get('cidade','') }}"></div>
+        <div><label for="uf">UF</label><input id="uf" name="uf" maxlength="2" value="{{ form.get('uf','') }}"></div>
+      </div>
+    </div>
+  </fieldset>
+  <fieldset><legend>2. Pagamento</legend>
+    {% for chave, nome in formas.items() %}
+    <label class="opcao"><input type="radio" name="forma_pagamento" value="{{ chave }}" {% if form.get('forma_pagamento','pix')==chave %}checked{% endif %}> {{ nome }}</label>
+    {% endfor %}
+    <div class="grid2" id="bloco-cartao">
+      <div><label for="cartao_numero">Número do cartão</label><input id="cartao_numero" name="cartao_numero" inputmode="numeric" autocomplete="off"></div>
+      <div><label for="cartao_validade">Validade (MM/AA)</label><input id="cartao_validade" name="cartao_validade" placeholder="MM/AA" autocomplete="off"></div>
+      <div><label for="cartao_cvv">CVV</label><input id="cartao_cvv" name="cartao_cvv" inputmode="numeric" maxlength="4" autocomplete="off"></div>
+      <p class="muted">Ambiente acadêmico: pagamento simulado, os dados do cartão não são armazenados.</p>
+    </div>
+  </fieldset>
+  <fieldset><legend>3. Observações</legend>
+    <textarea name="observacao" maxlength="300" placeholder="Ex.: é presente, tocar o interfone...">{{ form.get('observacao','') }}</textarea>
+  </fieldset>
+  <aside class="resumo">
+    <h2>Resumo</h2>
+    {% for p, qtd, sub in itens %}<p>{{ qtd }}× {{ p.nome }} <span>{{ brl(sub) }}</span></p>{% endfor %}
+    <p>Subtotal <strong>{{ brl(subtotal) }}</strong></p>
+    <button class="botao largo">Confirmar pedido</button>
+  </aside>
+</form>
+{% endblock %}
+{% block scripts %}
+<script>
+  const f = document.getElementById('checkout');
+  function sync() {
+    const entrega = f.tipo_entrega.value === 'entrega';
+    document.getElementById('bloco-endereco').hidden = !entrega;
+    document.getElementById('novo-endereco').hidden = !(entrega && f.endereco_id.value === 'novo');
+    document.getElementById('bloco-cartao').hidden = f.forma_pagamento.value !== 'cartao';
+  }
+  f.addEventListener('change', sync); sync();
+</script>
+{% endblock %}

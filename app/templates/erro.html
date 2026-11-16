@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="centro"><h1>{{ codigo }}</h1><p>{{ mensagem }}</p>
+<a class="botao" href="{{ url_for('shop.vitrine') }}">Voltar à vitrine</a></section>
+{% endblock %}

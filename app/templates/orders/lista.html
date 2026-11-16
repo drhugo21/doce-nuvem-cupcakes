@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% from "_macros.html" import brl %}
+{% block content %}
+<h1>Meus pedidos</h1>
+{% if not pedidos %}<p class="vazio">Você ainda não fez pedidos.</p>{% else %}
+<table class="tabela"><thead><tr><th>#</th><th>Data</th><th>Total</th><th>Status</th><th></th></tr></thead><tbody>
+{% for p in pedidos %}
+<tr><td>{{ p.id }}</td><td>{{ p.criado_em.strftime('%d/%m/%Y %H:%M') }}</td><td>{{ brl(p.total) }}</td>
+<td><span class="status">{{ p.status }}</span></td><td><a href="{{ url_for('orders.detalhe', pedido_id=p.id) }}">Detalhes</a></td></tr>
+{% endfor %}</tbody></table>{% endif %}
+{% endblock %}

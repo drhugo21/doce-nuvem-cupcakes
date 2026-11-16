@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% from "_macros.html" import brl %}
+{% block content %}
+<h1>Pedido #{{ pedido.id }}</h1>
+{% if pedido.status != 'Cancelado' %}
+<ol class="progresso" aria-label="Andamento do pedido">
+  {% set atual = pedido.fluxo.index(pedido.status) %}
+  {% for s in pedido.fluxo %}<li class="{{ 'feito' if loop.index0 <= atual }}">{{ s }}</li>{% endfor %}
+</ol>
+{% else %}<p class="alerta alerta-erro">Pedido cancelado.</p>{% endif %}
+<table class="tabela"><thead><tr><th>Produto</th><th>Qtd.</th><th>Preço</th><th>Subtotal</th></tr></thead><tbody>
+{% for i in pedido.itens %}<tr><td>{{ i.produto.nome }}</td><td>{{ i.quantidade }}</td><td>{{ brl(i.preco_unitario) }}</td><td>{{ brl(i.subtotal) }}</td></tr>{% endfor %}
+</tbody></table>
+<div class="resumo">
+  <p>Subtotal: {{ brl(pedido.subtotal) }}</p><p>Frete: {{ brl(pedido.frete) }}</p>
+  <p><strong>Total: {{ brl(pedido.total) }}</strong></p>
+  <p>Pagamento: {{ formas[pedido.forma_pagamento] }}</p>
+  <p>{% if pedido.tipo_entrega == 'entrega' %}Entrega em: {{ pedido.endereco_entrega }}{% else %}Retirada na loja{% endif %}</p>
+  {% if pedido.observacao %}<p>Obs.: {{ pedido.observacao }}</p>{% endif %}
+  {% if pedido.pode_cancelar %}
+  <form method="post" action="{{ url_for('orders.cancelar', pedido_id=pedido.id) }}" onsubmit="return confirm('Cancelar este pedido?')">
+    <button class="botao perigo">Cancelar pedido</button></form>
+  {% endif %}
+</div>
+{% endblock %}

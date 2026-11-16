@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% from "_macros.html" import brl %}
+{% block content %}
+<h1>Painel da loja</h1>
+<p><a href="{{ url_for('admin.produtos') }}">Gerenciar produtos →</a></p>
+<nav class="filtros-status">
+  <a href="{{ url_for('admin.painel') }}" class="{{ 'ativo' if not status_atual }}">Todos</a>
+  {% for s in todos_status %}<a href="{{ url_for('admin.painel', status=s) }}" class="{{ 'ativo' if s == status_atual }}">{{ s }}</a>{% endfor %}
+</nav>
+<table class="tabela"><thead><tr><th>#</th><th>Cliente</th><th>Itens</th><th>Total</th><th>Pagamento</th><th>Entrega</th><th>Status</th><th>Ações</th></tr></thead><tbody>
+{% for p in pedidos %}
+<tr><td>{{ p.id }}</td><td>{{ p.usuario.nome }}</td>
+<td>{% for i in p.itens %}{{ i.quantidade }}× {{ i.produto.nome }}<br>{% endfor %}</td>
+<td>{{ brl(p.total) }}</td><td>{{ formas[p.forma_pagamento] }}</td><td>{{ p.tipo_entrega|capitalize }}</td>
+<td><span class="status">{{ p.status }}</span></td>
+<td class="acoes">
+  {% if p.proximo_status() %}<form method="post" action="{{ url_for('admin.avancar', pedido_id=p.id) }}"><button class="botao">→ {{ p.proximo_status() }}</button></form>{% endif %}
+  {% if p.pode_cancelar %}<form method="post" action="{{ url_for('admin.cancelar', pedido_id=p.id) }}"><button class="link-perigo">Cancelar</button></form>{% endif %}
+</td></tr>
+{% else %}<tr><td colspan="8">Nenhum pedido.</td></tr>{% endfor %}
+</tbody></table>
+{% endblock %}

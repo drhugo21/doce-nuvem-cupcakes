@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% from "_macros.html" import brl, cupcake %}
+{% block content %}
+<section class="hero"><h1>Cupcakes gourmet feitos hoje</h1>
+<p>Escolha, pague pelo app e receba em casa ou retire na loja.</p></section>
+<form class="filtros" method="get" role="search">
+  <label for="q" class="sr">Buscar</label>
+  <input id="q" name="q" value="{{ busca }}" placeholder="Buscar sabor...">
+  <select name="categoria" aria-label="Categoria">
+    <option value="">Todas as categorias</option>
+    {% for c in categorias %}<option value="{{ c.id }}" {% if c.id == categoria_id %}selected{% endif %}>{{ c.nome }}</option>{% endfor %}
+  </select>
+  <button class="botao">Filtrar</button>
+</form>
+{% if not produtos %}<p class="vazio">Nenhum cupcake encontrado.</p>{% endif %}
+<div class="grade">
+{% for p in produtos %}
+  <article class="card">
+    <a href="{{ url_for('shop.detalhe', produto_id=p.id) }}" class="card-img">{{ cupcake(p.cor) }}</a>
+    <span class="tag">{{ p.categoria.nome }}</span>
+    <h2><a href="{{ url_for('shop.detalhe', produto_id=p.id) }}">{{ p.nome }}</a></h2>
+    <p class="preco">{{ brl(p.preco) }}</p>
+    {% if p.disponivel %}
+    <form method="post" action="{{ url_for('cart.adicionar', produto_id=p.id) }}">
+      <input type="hidden" name="voltar" value="{{ request.full_path }}">
+      <button class="botao">Adicionar</button>
+    </form>
+    {% else %}<p class="esgotado">Esgotado</p>{% endif %}
+  </article>
+{% endfor %}
+</div>
+{% endblock %}
