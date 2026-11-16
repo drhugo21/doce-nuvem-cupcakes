@@ -68,3 +68,10 @@ def test_fluxo_status():
     assert p.proximo_status() is None
     r = Pedido(tipo_entrega="retirada", status=StatusPedido.EM_PREPARO)
     assert r.proximo_status() == StatusPedido.PRONTO_RETIRADA
+
+
+def test_url_do_banco_usa_psycopg2(monkeypatch):
+    from app import _database_url
+    for url in ("postgres://u:s@h/db", "postgresql://u:s@h/db"):
+        monkeypatch.setenv("DATABASE_URL", url)
+        assert _database_url() == "postgresql+psycopg2://u:s@h/db"

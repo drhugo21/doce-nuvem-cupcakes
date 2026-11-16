@@ -23,9 +23,11 @@ login_manager.login_message_category = "aviso"
 
 def _database_url():
     url = os.environ.get("DATABASE_URL", "sqlite:///cupcakes.db")
-    # Render/Heroku entregam "postgres://", o SQLAlchemy exige "postgresql://"
-    if url.startswith("postgres://"):
-        url = url.replace("postgres://", "postgresql://", 1)
+    # Render entrega "postgres://" ou "postgresql://". O SQLAlchemy 2.1 usa o driver
+    # psycopg (v3) por padrão; aqui fixamos o psycopg2, que é o instalado.
+    for prefixo in ("postgres://", "postgresql://"):
+        if url.startswith(prefixo):
+            return "postgresql+psycopg2://" + url[len(prefixo):]
     return url
 
 
