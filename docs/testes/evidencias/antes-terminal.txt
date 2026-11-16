@@ -1,0 +1,12 @@
+Evidência B04 (antes) - 15/11/2026 21:34
+$ curl -X POST -d "quantidade=1&voltar=https://site-malicioso.com" /carrinho/adicionar/1
+HTTP 302 -> Location: https://site-malicioso.com/
+
+Evidência B05 (antes)
+$ grep -r csrf app/templates  (nenhum token nos formulários)
+$ curl /conta/logout (GET encerra a sessão)
+HTTP 302
+
+Evidência B06 (antes)
+$ cadastro com telefone=abcxyz
+HTTP 302 (cadastro aceito)

@@ -35,24 +35,24 @@ def test_produto_inativo_nao_aparece(client):
 def test_cadastro_e_login(client):
     r = cadastrar(client)
     assert "Bem-vindo" in r.text
-    client.get("/conta/logout")
+    client.post("/conta/logout")
     assert "Meus pedidos" in login(client, "cliente@teste.com", "segredo1").text
 
 
 def test_cadastro_email_duplicado(client):
-    cadastrar(client); client.get("/conta/logout")
+    cadastrar(client); client.post("/conta/logout")
     r = cadastrar(client)
     assert r.status_code == 400 and "Já existe" in r.text
 
 
 def test_login_senha_errada(client):
-    cadastrar(client); client.get("/conta/logout")
+    cadastrar(client); client.post("/conta/logout")
     r = login(client, "cliente@teste.com", "errada")
     assert r.status_code == 401 and "incorretos" in r.text
 
 
 def test_login_nao_redireciona_para_site_externo(client):
-    cadastrar(client); client.get("/conta/logout")
+    cadastrar(client); client.post("/conta/logout")
     r = client.post("/conta/login?next=https://malicioso.com",
                     data={"email": "cliente@teste.com", "senha": "segredo1"})
     assert "malicioso" not in r.headers["Location"]
@@ -172,7 +172,7 @@ def test_nao_cancela_em_preparo(cliente):
 
 
 def test_cliente_nao_ve_pedido_de_outro(client):
-    cadastrar(client, "a@teste.com"); pedido = _fazer_pedido(client); client.get("/conta/logout")
+    cadastrar(client, "a@teste.com"); pedido = _fazer_pedido(client); client.post("/conta/logout")
     cadastrar(client, "b@teste.com")
     assert client.get(f"/pedidos/{pedido.id}").status_code == 403
 
@@ -183,7 +183,7 @@ def test_cliente_nao_acessa_admin(cliente):
 
 
 def test_admin_avanca_status_ate_entregue(client):
-    cadastrar(client); pedido = _fazer_pedido(client); client.get("/conta/logout")
+    cadastrar(client); pedido = _fazer_pedido(client); client.post("/conta/logout")
     login(client, "admin@cupcakes.local", "admin123")
     for esperado in [StatusPedido.EM_PREPARO, StatusPedido.PRONTO_RETIRADA, StatusPedido.ENTREGUE]:
         client.post(f"/admin/pedidos/{pedido.id}/avancar")

@@ -6,8 +6,11 @@ Controller -> app/controllers/
 Regras de negócio isoladas em app/services/.
 """
 import os
+import secrets
+from datetime import timezone
+from zoneinfo import ZoneInfo
 
-from flask import Flask, render_template
+from flask import Flask, abort, render_template, request, session
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 
@@ -32,6 +35,7 @@ def create_app(config=None):
         SECRET_KEY=os.environ.get("SECRET_KEY", "dev-troque-em-producao"),
         SQLALCHEMY_DATABASE_URI=_database_url(),
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
+        CSRF_ENABLED=True,
     )
     if config:
         app.config.update(config)
@@ -48,6 +52,35 @@ def create_app(config=None):
     @app.context_processor
     def inject_cart():
         return {"qtd_carrinho": Carrinho().quantidade_total()}
+
+    # Proteção CSRF: todo POST precisa do token gerado na sessão
+    def csrf_token():
+        if "_csrf" not in session:
+            session["_csrf"] = secrets.token_urlsafe(32)
+        return session["_csrf"]
+
+    app.jinja_env.globals["csrf_token"] = csrf_token
+
+    @app.before_request
+    def verificar_csrf():
+        if request.method == "POST" and app.config["CSRF_ENABLED"]:
+            enviado = request.form.get("_csrf", "")
+            if not enviado or not secrets.compare_digest(enviado, session.get("_csrf", "")):
+                abort(400)
+
+    # Datas são gravadas em UTC e exibidas no horário de Brasília
+    fuso = ZoneInfo("America/Sao_Paulo")
+
+    @app.template_filter("data_local")
+    def data_local(valor, formato="%d/%m/%Y %H:%M"):
+        if valor.tzinfo is None:
+            valor = valor.replace(tzinfo=timezone.utc)
+        return valor.astimezone(fuso).strftime(formato)
+
+    @app.errorhandler(400)
+    def requisicao_invalida(e):
+        return render_template("erro.html", codigo=400,
+                               mensagem="Sua sessão expirou ou a requisição é inválida. Recarregue a página e tente de novo."), 400
 
     @app.errorhandler(404)
     def nao_encontrado(e):

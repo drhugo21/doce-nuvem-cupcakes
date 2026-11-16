@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <section class="form-box"><h1>Entrar</h1>
-<form method="post">
+<form method="post"><input type="hidden" name="_csrf" value="{{ csrf_token() }}">
   <label for="email">E-mail</label><input id="email" type="email" name="email" value="{{ email }}" required autocomplete="email">
   <label for="senha">Senha</label><input id="senha" type="password" name="senha" required autocomplete="current-password">
   <label class="check"><input type="checkbox" name="lembrar"> Manter conectado</label>

@@ -12,7 +12,9 @@ bp = Blueprint("auth", __name__, url_prefix="/conta")
 
 
 def _destino_seguro(url):
-    return url if url and not urlparse(url).netloc and url.startswith("/") else None
+    if url and url.startswith("/") and not url.startswith("//") and not urlparse(url).netloc:
+        return url
+    return None
 
 
 @bp.route("/cadastro", methods=["GET", "POST"])
@@ -22,7 +24,8 @@ def cadastro():
     if request.method == "POST":
         f = request.form
         email = f.get("email", "").strip().lower()
-        erros = validar_cadastro(f.get("nome"), email, f.get("senha"), f.get("confirmacao"))
+        erros = validar_cadastro(f.get("nome"), email, f.get("senha"), f.get("confirmacao"),
+                                 f.get("telefone", ""))
         if not erros and Usuario.query.filter_by(email=email).first():
             erros.append("Já existe uma conta com este e-mail.")
         if erros:
@@ -54,7 +57,7 @@ def login():
     return render_template("auth/login.html", email="")
 
 
-@bp.route("/logout")
+@bp.route("/logout", methods=["POST"])
 @login_required
 def logout():
     logout_user()

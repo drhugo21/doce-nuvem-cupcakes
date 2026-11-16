@@ -13,10 +13,10 @@
 <td>{% for i in p.itens %}{{ i.quantidade }}× {{ i.produto.nome }}<br>{% endfor %}</td>
 <td>{{ brl(p.total) }}</td><td>{{ formas[p.forma_pagamento] }}</td><td>{{ p.tipo_entrega|capitalize }}</td>
 <td><span class="status">{{ p.status }}</span></td>
-<td class="acoes">
-  {% if p.proximo_status() %}<form method="post" action="{{ url_for('admin.avancar', pedido_id=p.id) }}"><button class="botao">→ {{ p.proximo_status() }}</button></form>{% endif %}
-  {% if p.pode_cancelar %}<form method="post" action="{{ url_for('admin.cancelar', pedido_id=p.id) }}"><button class="link-perigo">Cancelar</button></form>{% endif %}
-</td></tr>
+<td><div class="acoes">
+  {% if p.proximo_status() %}<form method="post" action="{{ url_for('admin.avancar', pedido_id=p.id) }}"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><button class="botao">→ {{ p.proximo_status() }}</button></form>{% endif %}
+  {% if p.pode_cancelar %}<form method="post" action="{{ url_for('admin.cancelar', pedido_id=p.id) }}"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><button class="link-perigo">Cancelar</button></form>{% endif %}
+</div></td></tr>
 {% else %}<tr><td colspan="8">Nenhum pedido.</td></tr>{% endfor %}
 </tbody></table>
 {% endblock %}

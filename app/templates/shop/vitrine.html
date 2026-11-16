@@ -21,7 +21,7 @@
     <h2><a href="{{ url_for('shop.detalhe', produto_id=p.id) }}">{{ p.nome }}</a></h2>
     <p class="preco">{{ brl(p.preco) }}</p>
     {% if p.disponivel %}
-    <form method="post" action="{{ url_for('cart.adicionar', produto_id=p.id) }}">
+    <form method="post" action="{{ url_for('cart.adicionar', produto_id=p.id) }}"><input type="hidden" name="_csrf" value="{{ csrf_token() }}">
       <input type="hidden" name="voltar" value="{{ request.full_path }}">
       <button class="botao">Adicionar</button>
     </form>

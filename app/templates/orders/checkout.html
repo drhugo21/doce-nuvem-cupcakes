@@ -2,7 +2,7 @@
 {% from "_macros.html" import brl %}
 {% block content %}
 <h1>Finalizar pedido</h1>
-<form method="post" class="checkout" id="checkout">
+<form method="post" class="checkout" id="checkout"><input type="hidden" name="_csrf" value="{{ csrf_token() }}">
   <fieldset><legend>1. Entrega</legend>
     <label class="opcao"><input type="radio" name="tipo_entrega" value="entrega" {% if form.get('tipo_entrega','entrega')=='entrega' %}checked{% endif %}> Receber em casa ({{ brl(frete_entrega) if frete_entrega else 'frete grátis' }})</label>
     <label class="opcao"><input type="radio" name="tipo_entrega" value="retirada" {% if form.get('tipo_entrega')=='retirada' %}checked{% endif %}> Retirar na loja (grátis)</label>

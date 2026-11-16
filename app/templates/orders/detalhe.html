@@ -2,6 +2,7 @@
 {% from "_macros.html" import brl %}
 {% block content %}
 <h1>Pedido #{{ pedido.id }}</h1>
+<p class="muted">Feito em {{ pedido.criado_em|data_local }}</p>
 {% if pedido.status != 'Cancelado' %}
 <ol class="progresso" aria-label="Andamento do pedido">
   {% set atual = pedido.fluxo.index(pedido.status) %}
@@ -18,7 +19,7 @@
   <p>{% if pedido.tipo_entrega == 'entrega' %}Entrega em: {{ pedido.endereco_entrega }}{% else %}Retirada na loja{% endif %}</p>
   {% if pedido.observacao %}<p>Obs.: {{ pedido.observacao }}</p>{% endif %}
   {% if pedido.pode_cancelar %}
-  <form method="post" action="{{ url_for('orders.cancelar', pedido_id=pedido.id) }}" onsubmit="return confirm('Cancelar este pedido?')">
+  <form method="post" action="{{ url_for('orders.cancelar', pedido_id=pedido.id) }}" onsubmit="return confirm('Cancelar este pedido?')"><input type="hidden" name="_csrf" value="{{ csrf_token() }}">
     <button class="botao perigo">Cancelar pedido</button></form>
   {% endif %}
 </div>

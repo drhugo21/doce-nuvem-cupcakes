@@ -1,4 +1,6 @@
 """Carrinho de compras."""
+from urllib.parse import urlparse
+
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 
 from ..services.cart_service import Carrinho, ErroCarrinho
@@ -22,7 +24,9 @@ def adicionar(produto_id):
         flash(f"{p.nome} adicionado ao carrinho.", "sucesso")
     except ErroCarrinho as e:
         flash(str(e), "erro")
-    return redirect(request.form.get("voltar") or url_for("cart.ver"))
+    voltar = request.form.get("voltar", "")
+    seguro = voltar.startswith("/") and not voltar.startswith("//") and not urlparse(voltar).netloc
+    return redirect(voltar if seguro else url_for("cart.ver"))
 
 
 @bp.route("/atualizar/<int:produto_id>", methods=["POST"])

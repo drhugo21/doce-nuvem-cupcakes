@@ -8,8 +8,10 @@ def email_valido(email):
     return bool(re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email or ""))
 
 
-def validar_cadastro(nome, email, senha, confirmacao):
+def validar_cadastro(nome, email, senha, confirmacao, telefone=""):
     erros = []
+    if telefone and not re.fullmatch(r"\(?\d{2}\)?\s?9?\d{4}-?\d{4}", telefone.strip()):
+        erros.append("Telefone inválido. Use (11) 91234-5678.")
     if len((nome or "").strip()) < 3:
         erros.append("Informe seu nome completo.")
     if not email_valido(email):

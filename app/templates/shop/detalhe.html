@@ -12,7 +12,7 @@
     <p class="preco grande">{{ brl(produto.preco) }}</p>
     {% if produto.disponivel %}
     <p class="muted">{{ produto.estoque }} disponível(is)</p>
-    <form method="post" action="{{ url_for('cart.adicionar', produto_id=produto.id) }}" class="linha">
+    <form method="post" action="{{ url_for('cart.adicionar', produto_id=produto.id) }}" class="linha"><input type="hidden" name="_csrf" value="{{ csrf_token() }}">
       <label for="qtd">Quantidade</label>
       <input id="qtd" type="number" name="quantidade" value="1" min="1" max="{{ produto.estoque }}">
       <button class="botao">Adicionar ao carrinho</button>

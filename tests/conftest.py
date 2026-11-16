@@ -7,7 +7,7 @@ from app.seed import popular
 
 @pytest.fixture
 def app():
-    app = create_app({"TESTING": True, "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:"})
+    app = create_app({"TESTING": True, "CSRF_ENABLED": False, "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:"})
     with app.app_context():
         db.create_all()
         popular()

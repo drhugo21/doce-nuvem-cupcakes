@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <section class="form-box"><h1>{{ 'Editar' if produto.id else 'Novo' }} produto</h1>
-<form method="post">
+<form method="post"><input type="hidden" name="_csrf" value="{{ csrf_token() }}">
   <label for="nome">Nome</label><input id="nome" name="nome" value="{{ form.get('nome', produto.nome or '') }}" required>
   <label for="descricao">Descrição</label><textarea id="descricao" name="descricao">{{ form.get('descricao', produto.descricao or '') }}</textarea>
   <label for="categoria_id">Categoria</label>

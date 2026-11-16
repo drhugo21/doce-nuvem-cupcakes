@@ -1,0 +1,12 @@
+Evidências (depois) - 15/11/2026 21:35
+
+A04: redirecionamento externo bloqueado
+HTTP 302 -> Location: http://localhost:5055/carrinho/
+
+A05: POST sem token CSRF
+HTTP 400 (bloqueado)
+A05: logout por GET
+HTTP 405 (método não permitido)
+
+Testes automatizados:
+44 passed in 5.57s
