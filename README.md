@@ -12,6 +12,9 @@ Continuação da PIT I: app de vitrine virtual, pedido eletrônico, pagamento e 
 | Hospedagem | Render (web service + PostgreSQL gratuitos) |
 | Modo de codificação | Tradicional |
 
+## Documentação
+Veja a pasta [`docs/`](docs/README.md): escopo, UML, banco de dados, dicionário de dados e telas.
+
 ## Funcionalidades
 - **Vitrine:** listagem, busca por nome, filtro por categoria, página do produto, aviso de esgotado.
 - **Conta:** cadastro, login e logout, senha com hash.
